@@ -1,0 +1,67 @@
+apiVersion: "weblogic.oracle/v8"
+kind: Domain
+metadata:
+  name: test-domain
+  namespace: default
+  labels:
+    weblogic.domainUID: test-domain
+spec:
+  logHome: /shared/logs/
+  logHomeEnabled: true
+  restartVersion: "1"
+  webLogicCredentialsSecret:
+    name: test-domain-weblogic-credentials
+
+  configuration:
+    model:
+      runtimeEncryptionSecret: domain-runtime-encrypt-secret
+      domainType: WLS
+
+
+  domainHome: /u01/domain
+  domainHomeSourceType: FromModel
+  image: wko_log_bug:1.0
+  imagePullPolicy: "IfNotPresent"
+
+  includeServerOutInPodLog: true
+  serverStartPolicy: "IF_NEEDED"
+
+  serverPod:
+    env:
+    - name: USER_MEM_ARGS
+      value: "-Djava.security.egd=file:/dev/./urandom -Dweblogic.security.SSL.ignoreHostnameVerification=true -Xms256m -Xmx512m "
+    volumes:
+      - name: logs
+        emptyDir: {}
+    volumeMounts:
+      - mountPath: /shared/logs/
+        name: logs
+
+ 
+  adminServer:
+    serverStartState: "RUNNING"
+    adminService:
+      annotations:
+        test: test
+      labels:
+        test: test
+    serverPod:
+      volumes:
+        - name: logs
+          emptyDir: {}
+      volumeMounts:
+        - mountPath: /shared/logs/
+          name: logs
+
+ 
+  clusters:
+  - clusterName: test-cluster
+    serverStartState: "RUNNING"
+    replicas: 2
+    serverPod:
+      volumes:
+        - name: logs
+          emptyDir: {}
+      volumeMounts:
+        - mountPath: /shared/logs/
+          name: logs

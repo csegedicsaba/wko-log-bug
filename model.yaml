@@ -1,0 +1,28 @@
+domainInfo:
+  AdminUserName: '@@SECRET:__weblogic-credentials__:username@@'
+  AdminPassword: '@@SECRET:__weblogic-credentials__:password@@'
+
+topology:
+  Name: 'test-domain'
+  AdminServerName: 'admin-server'
+  ProductionModeEnabled: 'false'
+
+
+  Cluster:
+    'test-cluster':
+
+      DynamicServers:
+        ServerTemplate: 'test-cluster-template'
+        CalculatedListenPorts: false
+        ServerNamePrefix: 'managed-server-'
+        DynamicClusterSize: '2'
+        MaxDynamicClusterSize: '4'
+
+  Server:
+    'admin-server':
+      ListenPort: 7001
+   
+  ServerTemplate:
+    'test-cluster-template':
+      ListenPort: 8001
+      Cluster: 'test-cluster'
