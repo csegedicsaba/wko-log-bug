@@ -1,4 +1,4 @@
-FROM store/oracle/weblogic:12.2.1.4-dev-200117
+FROM container-registry.oracle.com/middleware/weblogic:12.2.1.4
 
 USER 1000
 
